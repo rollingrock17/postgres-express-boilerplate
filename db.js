@@ -1,12 +1,12 @@
-const Pool = require('pg').Pool;
+const { Pool } = require('pg')
 
-let pool;
+let pool
 
 const getPool = () => {
 	if (!pool) {
-		pool = new Pool();
+		pool = new Pool()
 	}
-	return pool;
-};
+	return pool
+}
 
-module.exports = getPool;
+module.exports = { getPool }
