@@ -2,14 +2,9 @@ const router = require('express').Router()
 const pool = require('../db').getPool()
 const Joi = require('@hapi/joi')
 const bcrypt = require('bcrypt')
-const saltRounds = 10
+const jwt = require('jsonwebtoken')
 
 const schema = Joi.object().keys({
-	name: Joi.string()
-		.alphanum()
-		.min(3)
-		.max(70)
-		.required(),
 	email: Joi.string()
 		.email({ minDomainSegments: 2 })
 		.required(),
@@ -22,16 +17,35 @@ async function routerPost(request, response) {
 	let client
 	try {
 		await Joi.validate(request.body, schema)
-		const hash = await bcrypt.hash(request.body.password, saltRounds)
 		client = await pool.connect()
-		await client.query(
+		const dbResponse = await client.query(
 			`
-                INSERT INTO wb_user (name, email, password)
-                VALUES ($1, $2, $3)
+                SELECT password
+                FROM wb_user
+                WHERE email = $1
             `,
-			[request.body.name, request.body.email, hash]
+			[request.body.email]
 		)
-		response.sendStatus(200)
+		const validPassword = await bcrypt.compare(
+			request.body.password,
+			dbResponse.rows[0].password
+		)
+		if (validPassword) {
+			jwt.sign(
+				{ email: request.body.email },
+				process.env.TOKENKEY,
+				{ algorithm: 'RS256' },
+				(error, token) => {
+					if (error) {
+						response.sendStatus(500)
+					} else {
+						response.json({ token })
+					}
+				}
+			)
+		} else {
+			response.sendStatus(400)
+		}
 	} catch (error) {
 		if (error.details) {
 			response.sendStatus(400)
