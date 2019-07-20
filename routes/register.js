@@ -3,19 +3,12 @@ const pool = require('../db').getPool()
 const Joi = require('@hapi/joi')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
+const { name, email, password } = require('../helpers/validation-helper')
 
 const schema = Joi.object().keys({
-	name: Joi.string()
-		.alphanum()
-		.min(3)
-		.max(70)
-		.required(),
-	email: Joi.string()
-		.email({ minDomainSegments: 2 })
-		.required(),
-	password: Joi.string()
-		.regex(/^[a-zA-Z0-9]{3,30}$/)
-		.required(),
+	name,
+	email,
+	password,
 })
 
 async function routerPost(request, response) {

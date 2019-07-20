@@ -1,11 +1,10 @@
 const router = require('express').Router()
 const pool = require('../db').getPool()
 const Joi = require('@hapi/joi')
+const { email } = require('../helpers/validation-helper')
 
 const schema = Joi.object().keys({
-	email: Joi.string()
-		.email({ minDomainSegments: 2 })
-		.required(),
+	email,
 })
 
 async function routerPost(request, response) {
