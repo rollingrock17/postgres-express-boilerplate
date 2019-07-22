@@ -2,10 +2,8 @@ const express = require('express')
 const logger = require('morgan')
 const jwt = require('jsonwebtoken')
 const helmet = require('helmet')
+const routes = require('./routes')
 const app = express()
-const register = require('./routes/register')
-const email = require('./routes/email')
-const signin = require('./routes/signin')
 
 app.use(logger('dev'))
 app.use(express.json())
@@ -17,17 +15,24 @@ app.use((request, _, next) => {
 		const token = request.headers.authorization.split(' ')[1]
 		jwt.verify(token, process.env.TOKENKEY, (_, payload) => {
 			if (payload) {
-				request.user_id = payload.id
+				request.body.userId = payload.id
+			} else {
+				delete request.body.userId
 			}
 			next()
 		})
 	} catch {
+		delete request.body.userId
 		next()
 	}
 })
 
-app.use('/register', register)
-app.use('/email', email)
-app.use('/signin', signin)
+routes(app)
+
+app.use((error, _, response, __) => {
+	console.error(error)
+	const { message, stack } = error
+	response.status(500).json({ message, stack })
+})
 
 module.exports = app
