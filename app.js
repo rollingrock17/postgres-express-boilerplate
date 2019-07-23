@@ -2,7 +2,7 @@ const express = require('express')
 const logger = require('morgan')
 const jwt = require('jsonwebtoken')
 const helmet = require('helmet')
-const routes = require('./routes')
+const routes = require('./src/routes')
 const app = express()
 
 app.use(logger('dev'))

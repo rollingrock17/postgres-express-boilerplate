@@ -1,5 +1,5 @@
 const faker = require('faker')
-const request = require('../../request')
+const request = require('./_request')
 
 // id: 33
 // name: Miss Josianne Jacobs

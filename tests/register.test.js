@@ -1,5 +1,5 @@
 const faker = require('faker')
-const request = require('../request')
+const request = require('./_request')
 
 describe('/register', () => {
 	it('should register new user', async () => {

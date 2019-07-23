@@ -1,4 +1,4 @@
-const request = require('../request')
+const request = require('./_request')
 
 // id: 7, name: jayne, email: jayne@ayre.com, password: abcd
 

@@ -1,19 +1,24 @@
 const Joi = require('@hapi/joi')
 
-module.exports = {
+const options = { allowUnknown: true }
+
+const validate = (request, schema) =>
+	Joi.validate(request.body, schema, options)
+
+const constraints = {
 	auth: {
 		userId: Joi.string().required(),
 	},
 	user: {
 		name: Joi.string()
+			.trim()
 			.min(3)
 			.max(70)
-			.trim()
 			.required(),
 		email: Joi.string()
+			.trim()
 			.email({ minDomainSegments: 2 })
 			.lowercase()
-			.trim()
 			.required(),
 		password: Joi.string()
 			.min(3)
@@ -21,18 +26,9 @@ module.exports = {
 			.regex(/\s/, { invert: true })
 			.required(),
 	},
-	character: {
-		name: Joi.string()
-			.min(3)
-			.max(70)
-			.trim()
-			.required(),
-		description: Joi.string()
-			.trim()
-			.default(null),
-		image_url: Joi.string()
-			.uri()
-			.max(200)
-			.trim(),
-	},
+}
+
+module.exports = {
+	validate,
+	constraints,
 }
