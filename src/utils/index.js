@@ -6,7 +6,7 @@ async function compare(data, encrypted) {
 	}
 }
 
-async function hash(data) {
+function hash(data) {
 	const saltRounds = 10
 	return bcrypt.hash(data, saltRounds)
 }
